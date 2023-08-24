@@ -1,12 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Web2.API.BusinessLogic;
 using Web2.API.Filters;
+using Web2.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var connectionString = builder.Configuration.GetConnectionString("TP2A_Context");
+builder.Services.AddDbContext<TP2A_Context>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<ICategoryBL, CategoryBL>();
 builder.Services.AddScoped<IVilleBL, VillesBL>();
