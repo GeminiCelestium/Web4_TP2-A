@@ -1,0 +1,17 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Web2.API
+build_property.RootNamespace = Web2.API
+build_property.ProjectDir = E:\Cours en Ligne\Sessions\Eté 2023\Web 4\TxPs\TP 2-A\TP2-A\src\Web2.API\
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = E:\Cours en Ligne\Sessions\Eté 2023\Web 4\TxPs\TP 2-A\TP2-A\src\Web2.API
+build_property._RazorSourceGeneratorDebug = 
