@@ -5,8 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Web2.API.Data.Models
 {
     public class Evenement
-    {
-        [Key]
+    {        
         public int ID { get; set; }
         public string Titre { get; set; }
         public string Description { get; set; }
