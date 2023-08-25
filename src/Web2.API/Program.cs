@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Web2.API.BusinessLogic;
+using Web2.API.Extentions;
 using Web2.API.Filters;
 using Web2.API.Models;
 
@@ -51,4 +52,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.CreatDBIfNotExists();
 app.Run();
