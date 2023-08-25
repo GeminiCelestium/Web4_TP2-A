@@ -17,6 +17,10 @@ namespace Web2.API.Data.Models
         MAURICIE,
         OUTAOUAI,
         ABITIBI,
-        COTE_NORD
+        COTE_NORD,
+        CAPITALE_NATIONALE,
+        LANAUDIERE,
+        MONTREAL,
+        MONTEREGIE,
     }
 }
