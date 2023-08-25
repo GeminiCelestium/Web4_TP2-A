@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Web2.API.DTO;
 using Web2.API.Models;
 
 namespace Web2.API.BusinessLogic
 {
     public class CategoryBL : ICategoryBL
     {
-        public Category Add(Category value)
+        public CategorieDTO Add(CategorieDTO value)
         {
             if (value is null || String.IsNullOrEmpty(value.Name?.Trim()) )
             {
@@ -19,7 +20,7 @@ namespace Web2.API.BusinessLogic
                 };
             }
 
-            var category = new Category { Name = value.Name.Trim().ToUpper() };
+            var category = new CategorieDTO { Name = value.Name.Trim().ToUpper() };
             category.ID = Repository.IdSequenceCategory++;
             Repository.Categories.Add(category);
 
@@ -44,17 +45,17 @@ namespace Web2.API.BusinessLogic
             }
         }
 
-        public Category Get(int id)
+        public CategorieDTO Get(int id)
         {
             return Repository.Categories.FirstOrDefault(x => x.ID == id);
         }
 
-        public IEnumerable<Category> GetList()
+        public IEnumerable<CategorieDTO> GetList()
         {
             return Repository.Categories;
         }
 
-        public Category Updade(int id, Category value)
+        public CategorieDTO Updade(int id, CategorieDTO value)
         {
             if (value == null || String.IsNullOrEmpty(value.Name?.Trim()))
             {
