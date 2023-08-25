@@ -6,7 +6,6 @@ namespace Web2.API.Models
 {
     public class Evenement
     {
-        [Key]
         public int ID { get; set; }
         public string Titre { get; set; }
         public string Description { get; set; }
