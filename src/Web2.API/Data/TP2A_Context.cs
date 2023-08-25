@@ -7,7 +7,7 @@ namespace Web2.API.Data
     {
         public TP2A_Context(DbContextOptions<TP2A_Context> option) : base(option)
         {
-
+            //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);   // A Garder ?
         }
 
         public DbSet<Categorie> Categories { get; set; }
