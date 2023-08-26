@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
-using System.Threading.Tasks;
 using Web2.API.BusinessLogic;
+using Web2.API.Data;
+using Web2.API.Data.Models;
 using Web2.API.DTO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,28 +17,39 @@ namespace Web2.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryBL _categoryBL;
+        private readonly TP2A_Context _context;
+        private readonly IMapper _mapper;
 
-        public CategoriesController(ICategoryBL categoryBL)
+        public CategoriesController(ICategoryBL categoryBL, TP2A_Context context, IMapper mapper)
         {
             _categoryBL = categoryBL;
+            _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/<CategoriesController>
         [HttpGet]
         [ProducesResponseType(typeof(List<CategorieDTO>), StatusCodes.Status200OK)]
-        public IEnumerable<CategorieDTO> Get()
+        public async Task<IEnumerable<CategorieDTO>> Get(int pageIndex = 1, int pageCount = 5)
         {
-            return _categoryBL.GetList();
+            var categories = await _context.Categories.Include(std => std.Evenements)
+                .Skip((pageIndex - 1) * pageCount)
+                .Take(pageCount)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return _mapper.Map<IList<Categorie>, IEnumerable<CategorieDTO>>(categories);
         }
 
         // GET api/<CategoriesController>/5
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(CategorieDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult Get(int id)
+        public async Task<CategorieDTO> Get(int id)
         {
-            var category = _categoryBL.Get(id);
-            return category is null ? NotFound(new { Errors = $"Element introuvable (id = {id})" }) : Ok(category);
+            var categorie = await _context.Categories.Include(std => std.Evenements).FirstOrDefaultAsync(x => x.ID == id);
+
+            return _mapper.Map<CategorieDTO>(categorie);
         }
 
         // POST api/<CategoriesController>
@@ -47,10 +57,10 @@ namespace Web2.API.Controllers
         [ProducesResponseType(typeof(CategorieDTO), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public ActionResult Post([FromBody] CategorieDTO value)
+        public async Task Post([FromBody] CategorieDTO categorie)
         {
-            value = _categoryBL.Add(value);
-            return CreatedAtAction(nameof(Get), new { id = value.ID }, value);
+            _context.Categories.Add(new Categorie { ID = categorie.ID, Name = categorie.Name, });
+            await _context.SaveChangesAsync();
         }
 
         // PUT api/<CategoriesController>/5
@@ -58,20 +68,25 @@ namespace Web2.API.Controllers
         [ProducesResponseType(typeof(CategorieDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public ActionResult Put(int id, [FromBody] CategorieDTO value)
+        public async Task Put(int id, [FromBody] CategorieDTO categorie)
         {
-            value = _categoryBL.Updade(id, value);
-            return Ok(value);
+            var categorieAMAJ = _context.Categories.Include(std => std.Evenements).FirstOrDefault(x => x.ID == id);
+
+            categorieAMAJ.ID = categorie.ID;
+            categorieAMAJ.Name = categorie.Name;
+
+            await _context.SaveChangesAsync();
         }
 
         // PUT api/<CategoriesController>/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public ActionResult Delete(int id)
+        public async Task Delete(int id)
         {
-            _categoryBL.Delete(id);
-            return NoContent();
+            var categorie = _context.Categories.Find(id);
+            _context.Categories.Remove(categorie);
+            await _context.SaveChangesAsync();
         }
 
     }
