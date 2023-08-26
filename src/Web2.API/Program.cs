@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using Web2.API.BusinessLogic;
 using Web2.API.Extentions;
-using Web2.API.Filters;// test nouvelle branche
+using Web2.API.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
