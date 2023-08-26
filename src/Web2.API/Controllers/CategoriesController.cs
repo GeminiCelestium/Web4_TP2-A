@@ -7,7 +7,6 @@ using System.Net.Mime;
 using System.Threading.Tasks;
 using Web2.API.BusinessLogic;
 using Web2.API.DTO;
-using Web2.API.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

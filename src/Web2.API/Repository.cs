@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Web2.API.Data.Models;
-using Web2.API.Models;
 
 namespace Web2.API
 {

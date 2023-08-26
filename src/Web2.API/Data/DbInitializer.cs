@@ -21,6 +21,8 @@ namespace Web2.API.Data
                 new Categorie{Name="LAN"},
             };
 
+            context.Categories.AddRange(categories);
+
             var evenements = new Evenement[] {
                 new Evenement{
                     Titre = "Le Grand Bingo",
@@ -46,6 +48,8 @@ namespace Web2.API.Data
                     IdCategorie = { 2, 6, },
                 },
             };
+
+            context.Evenements.AddRange(evenements);
 
             var participations = new Participation[] {
                 new Participation {
@@ -108,11 +112,15 @@ namespace Web2.API.Data
                 },
             };
 
+            context.Participations.AddRange(participations);
+
             var villes = new Ville[] {
                 new Ville{Name="Québec",Region=Region.CAPITALE_NATIONALE},
                 new Ville{Name="Montréal",Region=Region.MONTREAL},
                 new Ville{Name="Sept-Iles",Region=Region.COTE_NORD},
             };
+
+            context.Villes.AddRange(villes);
         }
     }
 }
