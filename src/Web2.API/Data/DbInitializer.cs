@@ -12,18 +12,19 @@ namespace Web2.API.Data
             }
 
             var categories = new Categorie[] {
-                new Categorie{Name="Spectacle"},
-                new Categorie{Name="Compétition"},
-                new Categorie{Name="Sport"},
-                new Categorie{Name="Concours"},
-                new Categorie{Name="Bingo"},
-                new Categorie{Name="LAN"},
+                new Categorie{ID = 1, Name="Spectacle"},
+                new Categorie{ID = 2, Name="Compétition"},
+                new Categorie{ID = 3, Name="Sport"},
+                new Categorie{ID = 4, Name="Concours"},
+                new Categorie{ID = 5, Name="Bingo"},
+                new Categorie{ID = 6, Name="LAN"},
             };
 
             context.Categories.AddRange(categories);
 
             var evenements = new Evenement[] {
                 new Evenement{
+                    ID = 1,
                     Titre = "Le Grand Bingo",
                     Description = "Chaque année, le plus grand Bingo de la province de Québec !",
                     Organisateur = "Joseph Inc.",
@@ -36,14 +37,15 @@ namespace Web2.API.Data
                 },
 
                 new Evenement {
+                    ID = 2,
                     Titre = "Clash de l'été",
-                    Description = "Chaque année, le plus grand Bingo de la province de Québec !",
+                    Description = "Retrouvez Les Conquérents au meilleur de leur forme pour cet évènement tant attendu !",
                     Organisateur = "Gravel Inc.",
                     DateDebut = DateTime.Parse("2023-07-13"),
                     DateFin = DateTime.Parse("2023-07-21"),
                     Adresse = "456 rue de La Faille",
                     Prix = 1500,
-                    VilleID = 2,
+                    VilleID = 1,
                     IdCategorie = { 2, 6, },
                 },
             };
@@ -52,6 +54,7 @@ namespace Web2.API.Data
 
             var participations = new Participation[] {
                 new Participation {
+                    ID = 1,
                     Email = "123456@gmail.com",
                     Nom = "Gravel",
                     Prenom = "Jason",
@@ -62,6 +65,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
+                    ID = 2,
                     Email = "13579@gmail.com",
                     Nom = "Tremblay",
                     Prenom = "Nicolas",
@@ -72,6 +76,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
+                    ID = 3,
                     Email = "02468@gmail.com",
                     Nom = "Dupont",
                     Prenom = "Marie-Pierre",
@@ -82,6 +87,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
+                    ID = 1,
                     Email = "987654@gmail.com",
                     Nom = "Joseph",
                     Prenom = "Nathan",
@@ -92,6 +98,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
+                    ID = 2,
                     Email = "97531@gmail.com",
                     Nom = "Gravel",
                     Prenom = "Jason",
@@ -102,6 +109,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
+                    ID = 3,
                     Email = "97531@gmail.com",
                     Nom = "Marcotte",
                     Prenom = "Vincent",
@@ -114,9 +122,9 @@ namespace Web2.API.Data
             context.Participations.AddRange(participations);
 
             var villes = new Ville[] {
-                new Ville{Name="Québec",Region=Region.CAPITALE_NATIONALE},
-                new Ville{Name="Montréal",Region=Region.MONTREAL},
-                new Ville{Name="Sept-Iles",Region=Region.COTE_NORD},
+                new Ville{ID = 1, Name = "Québec", Region =Region.CAPITALE_NATIONALE},
+                new Ville{ID = 2, Name = "Montréal", Region =Region.MONTREAL},
+                new Ville{ID = 3, Name = "Sept-Iles", Region =Region.COTE_NORD},
             };
 
             context.Villes.AddRange(villes);
