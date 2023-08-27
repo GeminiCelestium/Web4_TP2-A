@@ -11,8 +11,8 @@ namespace Web2.API.BusinessLogic
         public EvenementDTO Update(int id, EvenementDTO value);
         public void Delete(int id);
 
-        public IEnumerable<EvenementDTO> GetByVille(int villeId);
+        public VilleEvenementsDTO GetByVille(int villeId);
 
-        public EvenementDTO ConversionVersEvenementNonDTO(EvenementDTO evenementDTO);
+        public Evenement ConversionVersEvenementNonDTO(EvenementDTO evenementDTO);
     }
 }

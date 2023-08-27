@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mime;
 using Web2.API.BusinessLogic;
-using Web2.API.Models;
+using Web2.API.Data;
+using Web2.API.Data.Models;
+using Web2.API.DTO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,42 +17,75 @@ namespace Web2.API.Controllers
     public class VillesController : ControllerBase
     {
         private readonly IVilleBL _villeBL;
+        private readonly IMapper _mapper;
 
-        public VillesController(IVilleBL villeBL)
+        private readonly TP2A_Context _context;
+
+        public VillesController(IVilleBL villeBL, IMapper mapper, TP2A_Context context)
         {
             _villeBL = villeBL;
+            _mapper = mapper;
+            _context = context;
         }
-
 
 
         // GET: api/<VillesController>
         [HttpGet]
-        public IEnumerable<Ville> Get()
+        public ActionResult<IEnumerable<VilleDTO>> Get()
         {
-            return _villeBL.GetList();
+            var villes = _villeBL.GetList();
+
+            var villesDTO = _mapper.Map<IEnumerable<VilleDTO>>(villes);
+            return Ok(villesDTO);
         }
 
         // GET api/<VillesController>/5
         [HttpGet("{id}")]
-        public ActionResult Get(int id)
+        public ActionResult<VilleDTO> Get(int id)
         {
             var ville = _villeBL.Get(id);
-            return ville is null ? NotFound(new { Errors = $"Element introuvable (id = {id})" }) : Ok(ville);
+
+            if (ville is null)
+            {
+                return NotFound(new { Errors = $"Element introuvable (id = {id})" });
+            }
+
+            var villeDTO = _mapper.Map<VilleDTO>(ville);
+            return Ok(villeDTO);
         }
 
         // POST api/<VillesController>
         [HttpPost]
-        public ActionResult Post([FromBody] Ville value)
+        public ActionResult Post([FromBody] VilleDTO value)
         {
-            value = _villeBL.Add(value);
-            return CreatedAtAction(nameof(Get), new { id = value.ID }, null);
+            var VilleAAjouter = _mapper.Map<Ville>(value);
+
+            _context.Villes.Add(VilleAAjouter);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(Get), new { id = VilleAAjouter.ID }, null);
+
+            //var ville = _mapper.Map<Ville>(villeDTO);
+            //ville = _villeBL.Add(ville);
+            //var createdVilleDTO = _mapper.Map<VilleDTO>(ville);
+            //return CreatedAtAction(nameof(Get), new { id = createdVilleDTO.ID }, createdVilleDTO);
         }
 
         // PUT api/<VillesController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Ville value)
+        public ActionResult Put(int id, [FromBody] VilleDTO value)
         {
-            _villeBL.Updade(id, value);
+            var villeAMAJ = _villeBL.Get(id);
+
+            if (villeAMAJ == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(value, villeAMAJ);
+
+            _villeBL.Update(id, villeAMAJ);
+
             return NoContent();
         }
 

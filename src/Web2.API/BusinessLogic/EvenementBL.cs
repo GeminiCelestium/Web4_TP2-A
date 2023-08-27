@@ -7,7 +7,6 @@ namespace Web2.API.BusinessLogic
     {
         public EvenementDTO Add(EvenementDTO value)
         {
-
             ProcessEventValidation(value);
 
             value.ID = Repository.IdSequenceEvenement++;
@@ -27,7 +26,7 @@ namespace Web2.API.BusinessLogic
             }
         }
 
-        public EvenementDTO Get(int id)
+        public EvenementDTO Get(int id) 
         {
             var evenement = Repository.Evenements.FirstOrDefault(x => x.ID == id);
 
@@ -85,7 +84,7 @@ namespace Web2.API.BusinessLogic
         }
 
 
-        public EvenementDTO Updade(int id, EvenementDTO value)
+        public EvenementDTO Update(int id, EvenementDTO value)
         {
             var evenement = Repository.Evenements.FirstOrDefault(x => x.ID == id);
 
@@ -123,7 +122,7 @@ namespace Web2.API.BusinessLogic
         public VilleEvenementsDTO GetByVille(int villeId)
         {            
             IEnumerable<Evenement> listeEvenementsParVille = Repository.Evenements.Where(x => x.VilleID == villeId);
-            VilleEvenementsDTO listeEvenementsParDTO = new VilleEvenementsDTO();
+            VilleEvenementsDTO listeEvenementsParVilleDTO = new VilleEvenementsDTO();
 
             foreach (Evenement evenement in listeEvenementsParVille)
             {
@@ -143,10 +142,10 @@ namespace Web2.API.BusinessLogic
 
                 EvenementParticipationsDTO listeParticipationsParEventDTO = (EvenementParticipationsDTO)evenement.Participations;
 
-                listeEvenementsParDTO.Evenements.Add(evenementDTO);
+                listeEvenementsParVilleDTO.Evenements.Add(evenementDTO);
             }
 
-            return listeEvenementsParDTO;
+            return listeEvenementsParVilleDTO;
         }
 
         private void ProcessEventValidation(EvenementDTO value)

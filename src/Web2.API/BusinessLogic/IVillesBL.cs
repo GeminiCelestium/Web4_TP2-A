@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Web2.API.Models;
+﻿using Web2.API.Data.Models;
+using Web2.API.DTO;
 
 namespace Web2.API.BusinessLogic
 {
     public interface IVilleBL
     {
-        public IEnumerable<Ville> GetList();
-        public Ville Get(int id);
+        public IEnumerable<VilleDTO> GetList();
+        public VilleDTO Get(int id);
 
-        public Ville Add(Ville value);
-        public Ville Updade(int id, Ville value);
+        public VilleDTO Add(VilleDTO value);
+        public VilleDTO Update(int id, VilleDTO value);
         public void Delete(int id);
+
+        public Ville ConversionVersVilleNonDTO(VilleDTO villeDTO);
     }
 }

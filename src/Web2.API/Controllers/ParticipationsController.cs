@@ -1,13 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Net.Mime;
-using System.Threading.Tasks;
 using Web2.API.BusinessLogic;
-using Web2.API.Models;
+using Web2.API.Data;
+using Web2.API.Data.Models;
+using Web2.API.DTO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,13 +18,16 @@ namespace Web2.API.Controllers
     public class ParticipationsController : ControllerBase
     {
         private readonly IParticipationBL _participationBL;
+        private readonly IMapper _mapper;
 
-        public ParticipationsController(IParticipationBL participationBL)
+        private readonly TP2A_Context _context;
+
+        public ParticipationsController(IParticipationBL participationBL, IMapper mapper, TP2A_Context context)
         {
             _participationBL = participationBL;
+            _mapper = mapper;
+            _context = context;
         }
-
-
 
         // GET: api/<ParticipationsController>
         /// <summary>
@@ -34,10 +36,13 @@ namespace Web2.API.Controllers
         /// <returns></returns>
         /// <response code="200">Retourne une liste de participation</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Participation>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Participation>> Get()
+        [ProducesResponseType(typeof(List<ParticipationDTO>), StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<ParticipationDTO>> Get()
         {
-            return Ok(_participationBL.GetList());
+            var participations = _participationBL.GetList();
+            var participationsDTO = _mapper.Map<List<ParticipationDTO>>(participations);
+            
+            return Ok(participationsDTO);
         }
 
         // GET api/<ParticipationsController>/5
@@ -49,13 +54,19 @@ namespace Web2.API.Controllers
         /// <response code="200">Retourne une participation</response>
         /// <response code="404">Retourne une erreure si la participation est introuvable</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Participation), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ParticipationDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Participation> Get(int id)
+        public ActionResult<ParticipationDTO> Get(int id)
         {
             var participation = _participationBL.Get(id);
 
-            return participation != null ? Ok(participation) : NotFound(new { Errors = $"Element introuvable (id = {id})" });
+            if (participation == null)
+            {
+                return NotFound(new { Errors = $"Element introuvable (id = {id})" });
+            }
+
+            var participationDTO = _mapper.Map<ParticipationDTO>(participation);
+            return Ok(participationDTO);
         }
 
         // POST api/<ParticipationsController>
@@ -70,11 +81,21 @@ namespace Web2.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public ActionResult Post([FromBody] Participation value)
+        public ActionResult Post([FromBody] ParticipationDTO value)
         {
-            value = _participationBL.Add(value);
+            var participationAAjouter = _mapper.Map<Participation>(value);
 
-            return new AcceptedResult { Location = Url.Action(nameof(Status), new { id = value.ID }) };
+            _context.Participations.Add(participationAAjouter);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(Get), new { id = participationAAjouter.ID }, null);
+
+            //var participationAAjouter = _mapper.Map<Participation>(value);
+            //var participationAjoutee = _participationBL.Add(participationAAjouter);
+
+            //var participationDTO = _mapper.Map<ParticipationDTO>(participationAjoutee);
+
+            //return new AcceptedResult { Location = Url.Action(nameof(Status), new { id = participationDTO.ID }) };
         }
 
         // GET api/<ParticipationsController>/5/status
@@ -120,10 +141,13 @@ namespace Web2.API.Controllers
         /// <returns></returns>
         /// <response code="200">Retourne la liste des partcipations</response>
         [HttpGet("/api/evenements/{eventId}/[controller]")]
-        [ProducesResponseType(typeof(List<Participation>), StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Participation>> GetByEvent(int eventId)
+        [ProducesResponseType(typeof(List<ParticipationDTO>), StatusCodes.Status200OK)]
+        public ActionResult<EvenementParticipationsDTO> GetByEvent(int eventId)
         {
-            return Ok(_participationBL.GetByEvent(eventId));
+            var participations = _participationBL.GetByEvent(eventId);
+
+            var participationsDTO = _mapper.Map<List<ParticipationDTO>>(participations);
+            return Ok(participationsDTO);
         }
     }
 }

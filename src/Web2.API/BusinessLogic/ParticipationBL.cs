@@ -1,26 +1,22 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Web2.API.Models;
+﻿using System.Text.RegularExpressions;
+using Web2.API.Data.Models;
+using Web2.API.DTO;
 
 namespace Web2.API.BusinessLogic
 {
     public class ParticipationBL : IParticipationBL
     {
-        public Participation Add(Participation value)
+        public ParticipationDTO Add(ParticipationDTO value)
         {
-
-
             ProcessParticipationValidation(value);
 
             value.ID = Repository.IdSequenceParticipation++;
             value.IsValid = false;
             value.Email = value.Email.Trim();
             value.IsValid = false;
-            Repository.Participations.Add(value);
+
+            var participationNonDTO = ConversionVersParticipationNonDTO(value);
+            Repository.Participations.Add(participationNonDTO);
 
             return value;
         }
@@ -28,30 +24,88 @@ namespace Web2.API.BusinessLogic
         public void Delete(int id)
         {
             var participation = Repository.Participations.FirstOrDefault(x => x.ID == id);
+
             if (participation != null)
             {
                 Repository.Participations.Remove(participation);
             }
         }
 
-        public Participation Get(int id)
+        public ParticipationDTO Get(int id)
         {
-            return Repository.Participations.FirstOrDefault(x => x.ID == id);
+            var participation = Repository.Participations.FirstOrDefault(x => x.ID == id);
+
+            if (participation != null)
+            {
+                ParticipationDTO participationDTO = new ParticipationDTO
+                {
+                    ID = participation.ID,
+                    Email = participation.Email,
+                    Nom = participation.Nom,
+                    Prenom = participation.Prenom,
+                    NombrePlace = participation.NombrePlace,
+                    EvenementId = participation.EvenementId,
+                    IsValid = participation.IsValid,
+                };
+
+                return participationDTO;
+            }
+
+            return null;
         }
 
-        public IEnumerable<Participation> GetList()
+        public IEnumerable<ParticipationDTO> GetList()
         {
-            return Repository.Participations;
+            IEnumerable<Participation> listeParticipations = Repository.Participations;
+            List<ParticipationDTO> listeParticipationsDTO = new List<ParticipationDTO>();
+
+            foreach (Participation participation in listeParticipations)
+            {
+                ParticipationDTO participationDTO = new ParticipationDTO
+                {
+                    ID = participation.ID,
+                    Email = participation.Email,
+                    Nom = participation.Nom,
+                    Prenom = participation.Prenom,
+                    NombrePlace = participation.NombrePlace,
+                    EvenementId = participation.EvenementId,
+                    IsValid = participation.IsValid,
+                };
+
+                listeParticipationsDTO.Add(participationDTO);
+            }
+
+            return listeParticipationsDTO;
         }
 
-        public IEnumerable<Participation> GetByEvent(int eventId)
+        public EvenementParticipationsDTO GetByEvent(int eventId)
         {
-            return Repository.Participations.Where(x => x.EvenementId == eventId);
+            IEnumerable<Participation> listeParticipationsParEvent = Repository.Participations.Where(x => x.EvenementId == eventId);
+            EvenementParticipationsDTO listeParticipationsParEventDTO = new EvenementParticipationsDTO();
+
+            foreach (Participation participation in listeParticipationsParEvent)
+            {
+                ParticipationDTO participationDTO = new ParticipationDTO
+                {
+                    ID = participation.ID,
+                    Email = participation.Email,
+                    Nom = participation.Nom,
+                    Prenom = participation.Prenom,
+                    NombrePlace = participation.NombrePlace,
+                    EvenementId = participation.EvenementId,
+                    IsValid = participation.IsValid,
+                };
+
+                listeParticipationsParEventDTO.Participations.Add(participationDTO);
+            }
+
+            return listeParticipationsParEventDTO;
         }
 
         public bool GetStatus(int id)
         {
             var participation = Repository.Participations.FirstOrDefault(x => x.ID == id);
+            
             if (participation == null)
             {
                 throw new HttpException
@@ -61,22 +115,33 @@ namespace Web2.API.BusinessLogic
                 };
             }
 
-            VerifyParticipation(participation);
+            ParticipationDTO participationDTO = new ParticipationDTO
+            {
+                ID = participation.ID,
+                Email = participation.Email,
+                Nom = participation.Nom,
+                Prenom = participation.Prenom,
+                NombrePlace = participation.NombrePlace,
+                EvenementId = participation.EvenementId,
+                IsValid = participation.IsValid,
+            };
+
+            VerifyParticipation(participationDTO);
 
             return participation.IsValid;
         }
 
-        private void VerifyParticipation(Participation participation)
+        private void VerifyParticipation(ParticipationDTO participationDTO)
         {
-            if (!participation.IsValid)
+            if (!participationDTO.IsValid)
             {
                 var isValid = new Random().Next(1, 10) > 5 ? true : false;//Simuler la validation externe;
-                participation.IsValid = isValid;
+                participationDTO.IsValid = isValid;
             }
 
         }
 
-        private void ProcessParticipationValidation(Participation value)
+        private void ProcessParticipationValidation(ParticipationDTO value)
         {
             string errorMsg = null;
 
@@ -143,6 +208,20 @@ namespace Web2.API.BusinessLogic
             {
                 return false;
             }
+        }
+
+        public Participation ConversionVersParticipationNonDTO(ParticipationDTO participationDTO)
+        {
+            return new Participation
+            {
+                ID = participationDTO.ID,
+                Email = participationDTO.Email,
+                Nom = participationDTO.Nom,
+                Prenom = participationDTO.Prenom,
+                NombrePlace = participationDTO.NombrePlace,
+                EvenementId = participationDTO.EvenementId,
+                IsValid = participationDTO.IsValid,
+            };
         }
 
     }

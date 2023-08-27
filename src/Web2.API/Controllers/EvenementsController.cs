@@ -77,7 +77,6 @@ namespace Web2.API.Controllers
             }
 
             var evenementDTO = _mapper.Map<EvenementDTO>(evenement);
-
             return Ok(evenementDTO);
         }
 
@@ -146,13 +145,6 @@ namespace Web2.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public ActionResult Delete(int id)
         {
-            var evenementToDelete = _evenementBL.Get(id);
-
-            if (evenementToDelete == null)
-            {
-                return NotFound();
-            }
-
             _evenementBL.Delete(id);
             return NoContent();
         }
@@ -166,7 +158,7 @@ namespace Web2.API.Controllers
         /// <response code="200">Lister des evenements de la ville</response>
         [HttpGet("/api/villes/{villeId}/[controller]")]
         [ProducesResponseType(typeof(List<EvenementDTO>), (int)HttpStatusCode.OK)]
-        public ActionResult<IEnumerable<ParticipationDTO>> GetListByVille(int villeId)
+        public ActionResult<VilleEvenementsDTO> GetListByVille(int villeId)
         {
             var evenements = _evenementBL.GetByVille(villeId);
             var evenementsDTO = _mapper.Map<List<EvenementDTO>>(evenements);
