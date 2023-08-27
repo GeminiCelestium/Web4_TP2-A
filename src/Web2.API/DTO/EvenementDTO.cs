@@ -12,7 +12,7 @@
         public double? Prix { get; set; }
 
         public int? VilleID { get; set; }
-        public List<int> IdCategorie { get; set; }
+        public int IdCategorie { get; set; }
     }
 
     public class EvenementParticipationsDTO : EvenementDTO

@@ -22,18 +22,26 @@ namespace Web2.API.Data
 
             context.Categories.AddRange(categories);
 
+            var villes = new Ville[] {
+                new Ville{ID = 1, Name = "Québec", Region =Region.CAPITALE_NATIONALE},
+                new Ville{ID = 2, Name = "Montréal", Region =Region.MONTREAL},
+                new Ville{ID = 3, Name = "Sept-Iles", Region =Region.COTE_NORD},
+            };
+
+            context.Villes.AddRange(villes);
+
             var evenements = new Evenement[] {
                 new Evenement{
                     ID = 1,
                     Titre = "Le Grand Bingo",
                     Description = "Chaque année, le plus grand Bingo de la province de Québec !",
                     Organisateur = "Joseph Inc.",
-                    DateDebut = DateTime.Parse("2023-07-17"),
-                    DateFin = DateTime.Parse("2023-07-17"),
+                    DateDebut = DateTime.Parse("2023-07-17").ToUniversalTime(),
+                    DateFin = DateTime.Parse("2023-07-17").ToUniversalTime(),
                     Adresse = "123 rue du Bingo",
                     Prix = 100,
                     VilleID = 3,
-                    IdCategorie = { 5, },
+                    IdCategorie = 5,
                 },
 
                 new Evenement {
@@ -41,12 +49,12 @@ namespace Web2.API.Data
                     Titre = "Clash de l'été",
                     Description = "Retrouvez Les Conquérents au meilleur de leur forme pour cet évènement tant attendu !",
                     Organisateur = "Gravel Inc.",
-                    DateDebut = DateTime.Parse("2023-07-13"),
-                    DateFin = DateTime.Parse("2023-07-21"),
+                    DateDebut = DateTime.Parse("2023-07-13").ToUniversalTime(),
+                    DateFin = DateTime.Parse("2023-07-21").ToUniversalTime(),
                     Adresse = "456 rue de La Faille",
                     Prix = 1500,
                     VilleID = 1,
-                    IdCategorie = { 2, 6, },
+                    IdCategorie = 6,
                 },
             };
 
@@ -87,7 +95,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
-                    ID = 1,
+                    ID = 4,
                     Email = "987654@gmail.com",
                     Nom = "Joseph",
                     Prenom = "Nathan",
@@ -98,7 +106,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
-                    ID = 2,
+                    ID = 5,
                     Email = "97531@gmail.com",
                     Nom = "Gravel",
                     Prenom = "Jason",
@@ -109,7 +117,7 @@ namespace Web2.API.Data
 
                 new Participation
                 {
-                    ID = 3,
+                    ID = 6,
                     Email = "97531@gmail.com",
                     Nom = "Marcotte",
                     Prenom = "Vincent",
@@ -121,13 +129,7 @@ namespace Web2.API.Data
 
             context.Participations.AddRange(participations);
 
-            var villes = new Ville[] {
-                new Ville{ID = 1, Name = "Québec", Region =Region.CAPITALE_NATIONALE},
-                new Ville{ID = 2, Name = "Montréal", Region =Region.MONTREAL},
-                new Ville{ID = 3, Name = "Sept-Iles", Region =Region.COTE_NORD},
-            };
-
-            context.Villes.AddRange(villes);
+            context.SaveChanges();
         }
     }
 }

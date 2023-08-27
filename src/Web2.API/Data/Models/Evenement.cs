@@ -16,7 +16,7 @@ namespace Web2.API.Data.Models
         public double? Prix { get; set; }
 
         public int? VilleID { get; set; }
-        public List<int> IdCategorie { get; set; }
+        public int IdCategorie { get; set; }
 
         public ICollection<Participation> Participations { get; set; }
     }

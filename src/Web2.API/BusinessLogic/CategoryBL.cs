@@ -31,7 +31,7 @@ namespace Web2.API.BusinessLogic
 
             if (categorie != null)
             {
-                if (Repository.Evenements.Any(x => x.IdCategorie.Contains(categorie.ID)))
+                if (Repository.Evenements.Any(x => x.IdCategorie == categorie.ID))
                 {
                     throw new HttpException
                     {
