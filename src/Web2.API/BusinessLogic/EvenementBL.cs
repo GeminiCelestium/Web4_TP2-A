@@ -26,7 +26,7 @@ namespace Web2.API.BusinessLogic
             }
         }
 
-        public EvenementDTO Get(int id) 
+        public EvenementDTO Get(int id)
         {
             var evenement = Repository.Evenements.FirstOrDefault(x => x.ID == id);
 
@@ -120,7 +120,7 @@ namespace Web2.API.BusinessLogic
         }
 
         public VilleEvenementsDTO GetByVille(int villeId)
-        {            
+        {
             IEnumerable<Evenement> listeEvenementsParVille = Repository.Evenements.Where(x => x.VilleID == villeId);
             VilleEvenementsDTO listeEvenementsParVilleDTO = new VilleEvenementsDTO();
 
@@ -184,10 +184,10 @@ namespace Web2.API.BusinessLogic
             {
                 errorMsg = "La date de debut d'un evenement ne peut pas dans le passé";
             }
-            else if (value?.IdCategorie?.Any() != true)
+            /*else if (value?.IdCategorie?.Any() != true)
             {
                 errorMsg = "Une Categorie au moins est requis pour un evenement";
-            }
+            }*/
             else if (value?.VilleID is null)
             {
                 errorMsg = "La  Ville  d'un evenement est requis";
@@ -200,13 +200,10 @@ namespace Web2.API.BusinessLogic
                 }
                 else
                 {
-                    foreach (var categoryId in value.IdCategorie)
+                    if (!Repository.Villes.Any(x => x.ID == value.IdCategorie))
                     {
-                        if (!Repository.Villes.Any(x => x.ID == categoryId))
-                        {
-                            errorMsg = $"La  category (id = {categoryId}) n'existe pas";
-                            break;
-                        }
+                        errorMsg = $"La  category (id = {value.IdCategorie}) n'existe pas";
+                        return;
                     }
                 }
             }
