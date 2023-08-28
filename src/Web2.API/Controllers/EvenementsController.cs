@@ -41,6 +41,7 @@ namespace Web2.API.Controllers
         public async Task<ActionResult<IEnumerable<EvenementDTO>>> Get(int pageIndex = 1, int pageCount = 5)
         {
             var evenements = await _context.Evenements
+                .OrderBy(e => e.DateDebut)
                 .Skip((pageIndex - 1) * pageCount)
                 .Take(pageCount)
                 .AsNoTracking()
