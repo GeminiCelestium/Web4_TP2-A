@@ -9,16 +9,14 @@ namespace Web2.API
         public Web2APIMappingProfile()
         {
             CreateMap<Categorie, CategorieDTO>();
+            CreateMap<Categorie, CategorieEvenementsDTO>();
             CreateMap<Ville, VilleDTO>();
+            CreateMap<Ville, VilleEvenementsDTO>();
             CreateMap<Evenement, EvenementDTO>();
+            CreateMap<Evenement, EvenementParticipationsDTO>();
             CreateMap<Participation, ParticipationDTO>();
 
-            //CreateMap<Student, StudentDTO>()
-            //    .ForMember(dest => dest.EnrollmentIds, opt => opt.MapFrom(src => src.Enrollments.Select(e => e.ID).ToList()));
             
-            ////.ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Course.Title))
-            ////.ForMember(dest => dest.CourseID, opt => opt.MapFrom(src => src.Course.CourseID))
-            ////.ForMember(dest => dest.Credits, opt => opt.MapFrom(src => src.Course.Credits));
         }
     }
 }

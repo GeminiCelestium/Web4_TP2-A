@@ -38,10 +38,18 @@ namespace Web2.API.Controllers
         /// <response code="200">Retourne un evenement</response>
         [HttpGet]
         [ProducesResponseType(typeof(List<EvenementDTO>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<EvenementDTO>>> Get(int pageIndex = 1, int pageCount = 5)
+        public async Task<ActionResult<IEnumerable<EvenementDTO>>> Get(string recherche, int pageIndex = 1, int pageCount = 5)
         {
-            var evenements = await _context.Evenements
-                .OrderBy(e => e.DateDebut)
+            IQueryable<Evenement> query = _context.Evenements.OrderBy(e => e.DateDebut);
+
+            if (!string.IsNullOrEmpty(recherche))
+            {
+                query = query.Where(e =>
+                    e.Titre.Contains(recherche) ||
+                    e.Description.Contains(recherche));
+            }
+
+            var evenements = await query
                 .Skip((pageIndex - 1) * pageCount)
                 .Take(pageCount)
                 .AsNoTracking()
