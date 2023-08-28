@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Web2.API.Data.Models;
+﻿using Web2.API.Data.Models;
 using Web2.API.DTO;
 
 namespace Web2.API.BusinessLogic
@@ -20,21 +16,22 @@ namespace Web2.API.BusinessLogic
                 };
             }
 
-            var category = new CategorieDTO { Name = value.Name.Trim().ToUpper() };
-            category.ID = Repository.IdSequenceCategory++;
+            var categorie = new CategorieDTO { Name = value.Name.Trim().ToUpper() };
+            categorie.ID = Repository.IdSequenceCategory++;
 
-            var categorieNonDTO = ConversionVersCategorieNonDTO(category);
+            var categorieNonDTO = ConversionVersCategorieNonDTO(categorie);
             Repository.Categories.Add(categorieNonDTO);
 
-            return category;
+            return categorie;
         }
 
         public void Delete(int id)
         {
-            var category = Repository.Categories.FirstOrDefault(x => x.ID == id);
-            if (category != null)
+            var categorie = Repository.Categories.FirstOrDefault(x => x.ID == id);
+
+            if (categorie != null)
             {
-                if (Repository.Evenements.Any(x => x.IdCategorie.Contains(category.ID)))
+                if (Repository.Evenements.Any(x => x.IdCategorie == categorie.ID))
                 {
                     throw new HttpException
                     {
@@ -43,7 +40,7 @@ namespace Web2.API.BusinessLogic
                     };
 
                 }
-                Repository.Categories.Remove(category);
+                Repository.Categories.Remove(categorie);
             }
         }
 
@@ -58,6 +55,8 @@ namespace Web2.API.BusinessLogic
                     ID = categorie.ID,
                     Name = categorie.Name,
                 };
+
+                CategorieEvenementsDTO listeEventsParCategorieDTO = (CategorieEvenementsDTO)categorie.Evenements;
 
                 return categorieDTO;
             }
@@ -78,6 +77,8 @@ namespace Web2.API.BusinessLogic
                     Name = categorie.Name,
                 };
 
+                CategorieEvenementsDTO listeEventsParCategorieDTO = (CategorieEvenementsDTO)categorie.Evenements;
+
                 listeCategoriesDTO.Add(categorieDTO);
             }
 
@@ -95,10 +96,10 @@ namespace Web2.API.BusinessLogic
                 };
             }
 
-            var category = Repository.Categories.FirstOrDefault(x => x.ID == id);
+            var categorie = Repository.Categories.FirstOrDefault(x => x.ID == id);
 
 
-            if (category == null)
+            if (categorie == null)
             {
                 throw new HttpException
                 {
@@ -107,12 +108,12 @@ namespace Web2.API.BusinessLogic
                 };
             }
 
-            category.Name = value.Name.Trim().ToUpper();
+            categorie.Name = value.Name.Trim().ToUpper();
 
             CategorieDTO categorieDTO = new CategorieDTO
             {
-                ID = category.ID,
-                Name = category.Name,
+                ID = categorie.ID,
+                Name = categorie.Name,
             };
 
             return categorieDTO;
@@ -120,10 +121,13 @@ namespace Web2.API.BusinessLogic
 
         public Categorie ConversionVersCategorieNonDTO(CategorieDTO categorieDTO)
         {
+            CategorieEvenementsDTO listeEventsParCategorieDTO = new();
+
             return new Categorie
             {
                 ID = categorieDTO.ID,
                 Name = categorieDTO.Name,
+                Evenements = (ICollection<Evenement>)listeEventsParCategorieDTO.Evenements,
             };
         }
     }

@@ -1,21 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Web2.API.Models;
+﻿using Web2.API.Data.Models;
+using Web2.API.DTO;
 
 namespace Web2.API.BusinessLogic
 {
     public class EvenementBL : IEvenementBL
     {
-        public Evenement Add(Evenement value)
+        public EvenementDTO Add(EvenementDTO value)
         {
-
             ProcessEventValidation(value);
 
             value.ID = Repository.IdSequenceEvenement++;
-            Repository.Evenements.Add(value);
+
+            var eventNonDTO = ConversionVersEvenementNonDTO(value);
+            Repository.Evenements.Add(eventNonDTO);
 
             return value;
         }
@@ -29,17 +26,65 @@ namespace Web2.API.BusinessLogic
             }
         }
 
-        public Evenement Get(int id)
+        public EvenementDTO Get(int id)
         {
-            return Repository.Evenements.FirstOrDefault(x => x.ID == id);
+            var evenement = Repository.Evenements.FirstOrDefault(x => x.ID == id);
+
+            if (evenement != null)
+            {
+                EvenementDTO evenementDTO = new EvenementDTO
+                {
+                    ID = evenement.ID,
+                    Titre = evenement.Titre,
+                    Description = evenement.Description,
+                    Organisateur = evenement.Organisateur,
+                    DateDebut = evenement.DateDebut,
+                    DateFin = evenement.DateFin,
+                    Adresse = evenement.Adresse,
+                    Prix = evenement.Prix,
+                    VilleID = evenement.VilleID,
+                    IdCategorie = evenement.IdCategorie,
+                };
+
+                EvenementParticipationsDTO listeParticipationsParEventDTO = (EvenementParticipationsDTO)evenement.Participations;
+
+                return evenementDTO;
+            }
+
+            return null;
         }
 
-        public IEnumerable<Evenement> GetList()
+        public IEnumerable<EvenementDTO> GetList()
         {
-            return Repository.Evenements;
+            IEnumerable<Evenement> listeEvenements = Repository.Evenements;
+            List<EvenementDTO> listeEvenementsDTO = new List<EvenementDTO>();
+
+            foreach (Evenement evenement in listeEvenements)
+            {
+                EvenementDTO evenementDTO = new EvenementDTO
+                {
+                    ID = evenement.ID,
+                    Titre = evenement.Titre,
+                    Description = evenement.Description,
+                    Organisateur = evenement.Organisateur,
+                    DateDebut = evenement.DateDebut,
+                    DateFin = evenement.DateFin,
+                    Adresse = evenement.Adresse,
+                    Prix = evenement.Prix,
+                    VilleID = evenement.VilleID,
+                    IdCategorie = evenement.IdCategorie,
+                };
+
+                EvenementParticipationsDTO listeParticipationsParEventDTO = (EvenementParticipationsDTO)evenement.Participations;
+
+                listeEvenementsDTO.Add(evenementDTO);
+            }
+
+            return listeEvenementsDTO;
         }
 
-        public Evenement Updade(int id, Evenement value)
+
+        public EvenementDTO Update(int id, EvenementDTO value)
         {
             var evenement = Repository.Evenements.FirstOrDefault(x => x.ID == id);
 
@@ -55,24 +100,55 @@ namespace Web2.API.BusinessLogic
 
             ProcessEventValidation(value);
 
-            evenement.Titre = value.Titre;
-            evenement.Description = value.Description;
-            evenement.Organisateur = value.Organisateur;
-            evenement.DateDebut = value.DateDebut;
-            evenement.DateFin = value.DateFin;
-            evenement.VilleID = value.VilleID;
-            evenement.CategoryIDs = value.CategoryIDs;
-            evenement.Prix = value.Prix;
+            EvenementDTO evenementDTO = new EvenementDTO
+            {
+                ID = evenement.ID,
+                Titre = evenement.Titre,
+                Description = evenement.Description,
+                Organisateur = evenement.Organisateur,
+                DateDebut = evenement.DateDebut,
+                DateFin = evenement.DateFin,
+                Adresse = evenement.Adresse,
+                Prix = evenement.Prix,
+                VilleID = evenement.VilleID,
+                IdCategorie = evenement.IdCategorie,
+            };
 
-            return evenement;
+            EvenementParticipationsDTO listeParticipationsParEventDTO = (EvenementParticipationsDTO)evenement.Participations;
+
+            return evenementDTO;
         }
 
-        public IEnumerable<Evenement> GetByVille(int villeId)
+        public VilleEvenementsDTO GetByVille(int villeId)
         {
-            return Repository.Evenements.Where(x => x.VilleID == villeId);
+            IEnumerable<Evenement> listeEvenementsParVille = Repository.Evenements.Where(x => x.VilleID == villeId);
+            VilleEvenementsDTO listeEvenementsParVilleDTO = new VilleEvenementsDTO();
+
+            foreach (Evenement evenement in listeEvenementsParVille)
+            {
+                EvenementDTO evenementDTO = new EvenementDTO
+                {
+                    ID = evenement.ID,
+                    Titre = evenement.Titre,
+                    Description = evenement.Description,
+                    Organisateur = evenement.Organisateur,
+                    DateDebut = evenement.DateDebut,
+                    DateFin = evenement.DateFin,
+                    Adresse = evenement.Adresse,
+                    Prix = evenement.Prix,
+                    VilleID = evenement.VilleID,
+                    IdCategorie = evenement.IdCategorie,
+                };
+
+                EvenementParticipationsDTO listeParticipationsParEventDTO = (EvenementParticipationsDTO)evenement.Participations;
+
+                listeEvenementsParVilleDTO.Evenements.Add(evenementDTO);
+            }
+
+            return listeEvenementsParVilleDTO;
         }
 
-        private void ProcessEventValidation(Evenement value)
+        private void ProcessEventValidation(EvenementDTO value)
         {
             string errorMsg = null;
 
@@ -108,10 +184,10 @@ namespace Web2.API.BusinessLogic
             {
                 errorMsg = "La date de debut d'un evenement ne peut pas dans le passé";
             }
-            else if (value?.CategoryIDs?.Any() != true)
+            /*else if (value?.IdCategorie?.Any() != true)
             {
                 errorMsg = "Une Categorie au moins est requis pour un evenement";
-            }
+            }*/
             else if (value?.VilleID is null)
             {
                 errorMsg = "La  Ville  d'un evenement est requis";
@@ -124,13 +200,10 @@ namespace Web2.API.BusinessLogic
                 }
                 else
                 {
-                    foreach (var categoryId in value.CategoryIDs)
+                    if (!Repository.Villes.Any(x => x.ID == value.IdCategorie))
                     {
-                        if (!Repository.Villes.Any(x => x.ID == categoryId))
-                        {
-                            errorMsg = $"La  category (id = {categoryId}) n'existe pas";
-                            break;
-                        }
+                        errorMsg = $"La  category (id = {value.IdCategorie}) n'existe pas";
+                        return;
                     }
                 }
             }
@@ -143,6 +216,26 @@ namespace Web2.API.BusinessLogic
                     StatusCode = StatusCodes.Status400BadRequest
                 };
             }
+        }
+
+        public Evenement ConversionVersEvenementNonDTO(EvenementDTO evenementDTO)
+        {
+            EvenementParticipationsDTO listeParticipationsParEventDTO = new();
+
+            return new Evenement
+            {
+                ID = evenementDTO.ID,
+                Titre = evenementDTO.Titre,
+                Description = evenementDTO.Description,
+                Organisateur = evenementDTO.Organisateur,
+                DateDebut = evenementDTO.DateDebut,
+                DateFin = evenementDTO.DateFin,
+                Adresse = evenementDTO.Adresse,
+                Prix = evenementDTO.Prix,
+                VilleID = evenementDTO.VilleID,
+                IdCategorie = evenementDTO.IdCategorie,
+                Participations = (ICollection<Participation>)listeParticipationsParEventDTO.Participations,
+            };
         }
     }
 }

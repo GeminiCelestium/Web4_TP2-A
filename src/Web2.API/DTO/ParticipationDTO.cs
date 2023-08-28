@@ -1,4 +1,6 @@
-﻿namespace Web2.API.DTO
+﻿using Web2.API.Data.Models;
+
+namespace Web2.API.DTO
 {
     public class ParticipationDTO
     {
@@ -7,7 +9,7 @@
         public string Nom { get; set; }
         public string Prenom { get; set; }
         public int NombrePlace { get; set; } = 1;
-        public int EvenementId { get; set; }
+        public Evenement Evenement { get; set; }
         public bool IsValid { get; set; }
     }
 }

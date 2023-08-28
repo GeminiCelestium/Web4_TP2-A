@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using Web2.API.Data;
-using Web2.API.Models;
 
 namespace Web2.API.Extentions
 {

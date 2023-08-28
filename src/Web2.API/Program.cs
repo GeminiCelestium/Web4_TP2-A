@@ -3,9 +3,11 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Web2.API.BusinessLogic;
+using Web2.API.Data;
 using Web2.API.Extentions;
 using Web2.API.Filters;
-using Web2.API.Models;
+using Web2.API.Repositories;
+using Web2.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddScoped<ICategoryBL, CategoryBL>();
 builder.Services.AddScoped<IVilleBL, VillesBL>();
 builder.Services.AddScoped<IEvenementBL, EvenementBL>();
 builder.Services.AddScoped<IParticipationBL, ParticipationBL>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IStatistiquesService, StatistiquesService>();
 
 builder.Services.AddControllers(o =>
 {
@@ -36,6 +40,8 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 

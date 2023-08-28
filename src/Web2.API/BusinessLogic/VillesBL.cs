@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Linq;
-using Web2.API.Models;
+﻿using Web2.API.Data.Models;
+using Web2.API.DTO;
 
 namespace Web2.API.BusinessLogic
 {
     public class VillesBL : IVilleBL
     {
-        public Ville Add(Ville value)
+        public VilleDTO Add(VilleDTO value)
         {
-
             if (value == null )
             {
                 throw new HttpException 
@@ -20,22 +17,57 @@ namespace Web2.API.BusinessLogic
             }
 
             value.ID = Repository.IdSequenceVille++;
-            Repository.Villes.Add(value);
+
+            var villeNonDTO = ConversionVersVilleNonDTO(value); 
+            Repository.Villes.Add(villeNonDTO);
 
             return value;
         }
 
-        public IEnumerable<Ville> GetList()
+        public IEnumerable<VilleDTO> GetList()
         {
-            return Repository.Villes;
+            IEnumerable<Ville> listeVilles = Repository.Villes;
+            List<VilleDTO> listeVillesDTO = new List<VilleDTO>();
+
+            foreach (Ville ville in listeVilles)
+            {
+                VilleDTO villeDTO = new VilleDTO
+                {
+                    ID = ville.ID,
+                    Name = ville.Name,
+                    Region = (DTO.Region)ville.Region,
+                };
+
+                VilleEvenementsDTO listeEventsParVilleDTO = (VilleEvenementsDTO)ville.Evenements;
+
+                listeVillesDTO.Add(villeDTO);
+            }
+
+            return listeVillesDTO;
         }
 
-        public Ville Get(int id)
+        public VilleDTO Get(int id)
         {
-            return Repository.Villes.FirstOrDefault(x => x.ID == id);
+            var ville = Repository.Villes.FirstOrDefault(x => x.ID == id);
+
+            if (ville != null)
+            {
+                VilleDTO villeDTO = new VilleDTO
+                {
+                    ID = ville.ID,
+                    Name = ville.Name,
+                    Region = (DTO.Region)ville.Region,
+                };
+
+                VilleEvenementsDTO listeEventsParVilleDTO = (VilleEvenementsDTO)ville.Evenements;
+
+                return villeDTO;
+            }
+
+            return null;
         }
 
-        public Ville Updade(int id, Ville value)
+        public VilleDTO Update(int id, VilleDTO value)
         {
             if (value == null)
             {
@@ -47,8 +79,6 @@ namespace Web2.API.BusinessLogic
             }
 
             var ville = Repository.Villes.FirstOrDefault(x => x.ID == id);
-
-
             if (ville == null)
             {
                 throw new HttpException
@@ -58,10 +88,16 @@ namespace Web2.API.BusinessLogic
                 };
             }
 
-            ville.Name = value.Name;
-            ville.Region = value.Region;
+            VilleDTO villeDTO = new VilleDTO
+            {
+                ID= ville.ID,
+                Name = ville.Name,
+                Region = (DTO.Region)ville.Region,
+            };
 
-            return ville;
+            VilleEvenementsDTO listeVillesParEventDTO = (VilleEvenementsDTO)ville.Evenements;
+
+            return villeDTO;
         }
 
         public void Delete(int id)
@@ -76,10 +112,23 @@ namespace Web2.API.BusinessLogic
                         Errors = new { Error = "Il n'est pas possible de supprimer une ville lié a au moins un evenement" },
                         StatusCode = StatusCodes.Status409Conflict
                     };
-
                 }
+
                 Repository.Villes.Remove(ville);
             }
+        }
+
+        public Ville ConversionVersVilleNonDTO(VilleDTO villeDTO)
+        {
+            VilleEvenementsDTO listeEvenementsParVilleDTO = new();
+
+            return new Ville
+            {
+                ID = villeDTO.ID,
+                Name = villeDTO.Name,
+                Region = (Data.Models.Region)villeDTO.Region,
+                Evenements = (ICollection<Evenement>)listeEvenementsParVilleDTO.Evenements,
+            };
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Web2.API.Data.Models
         public string Nom { get; set; }
         public string Prenom { get; set; }
         public int NombrePlace { get; set; } = 1;
-        public int EvenementId { get; set; }
+        public Evenement Evenement { get; set; }
         public bool IsValid { get; set; }
     }
 }

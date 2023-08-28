@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Mime;
-using System.Threading.Tasks;
 using Web2.API.BusinessLogic;
-using Web2.API.Models;
+using Web2.API.Data;
+using Web2.API.Data.Models;
+using Web2.API.DTO;
+using Web2.API.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,10 +19,17 @@ namespace Web2.API.Controllers
     public class EvenementsController : ControllerBase
     {
         private readonly IEvenementBL _evenementBL;
+        private readonly IMapper _mapper;
+        private readonly IEventRepository _eventRepository;
 
-        public EvenementsController(IEvenementBL evenementBL)
+        private readonly TP2A_Context _context;
+
+        public EvenementsController(IEvenementBL evenementBL, IMapper mapper, TP2A_Context context, IEventRepository eventRepository)
         {
             _evenementBL = evenementBL;
+            _mapper = mapper;
+            _context = context;
+            _eventRepository = eventRepository;
         }
 
 
@@ -32,10 +40,29 @@ namespace Web2.API.Controllers
         /// <returns></returns>
         /// <response code="200">Retourne un evenement</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Evenement>),(int)HttpStatusCode.OK)]
-        public ActionResult<IEnumerable<Evenement>> Get()
+        [ProducesResponseType(typeof(List<EvenementDTO>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<EvenementDTO>>> Get(string recherche, int pageIndex = 1, int pageCount = 5)
         {
-            return Ok(_evenementBL.GetList());
+            IQueryable<Evenement> query = _context.Evenements.OrderBy(e => e.DateDebut);
+
+            if (!string.IsNullOrEmpty(recherche))
+            {
+                var rechercheEnMin = recherche.ToLower();
+
+                query = query.Where(e =>
+                    e.Titre.ToLower().Contains(rechercheEnMin) ||
+                    e.Description.ToLower().Contains(rechercheEnMin));
+            }
+
+            var evenements = await query
+                .Skip((pageIndex - 1) * pageCount)
+                .Take(pageCount)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var evenementsDTO = _mapper.Map<List<EvenementDTO>>(evenements);
+
+            return Ok(evenementsDTO);
         }
 
         // GET api/evenements/5
@@ -52,12 +79,19 @@ namespace Web2.API.Controllers
         /// <response code="200">Retourne un evenement</response>
         /// <response code="404">Retourne une erreur si l'evenement est introuvable</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Evenement), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(EvenementDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public ActionResult<Evenement> Get(int id)
+        public async Task<ActionResult<EvenementDTO>> Get(int id)
         {
-            var evenement = _evenementBL.Get(id);
-            return evenement != null ? Ok(evenement) : NotFound(new { Errors = $"Element introuvable (id = {id})" });
+            var evenement = await _context.Evenements.FirstOrDefaultAsync(x => x.ID == id);
+
+            if (evenement == null)
+            {
+                return NotFound(new { Errors = $"Element introuvable (id = {id})" });
+            }
+
+            var evenementDTO = _mapper.Map<EvenementDTO>(evenement);
+            return Ok(evenementDTO);
         }
 
         // POST api/evenements
@@ -72,11 +106,14 @@ namespace Web2.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public ActionResult Post([FromBody] Evenement value)
+        public ActionResult Post([FromBody] EvenementDTO value)
         {
-            value = _evenementBL.Add(value);
+            var evenementACreer = _mapper.Map<Evenement>(value);
 
-            return CreatedAtAction(nameof(Get), new { id = value.ID }, null);
+            _context.Evenements.Add(evenementACreer);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(Get), new { id = evenementACreer.ID }, null);
 
         }
 
@@ -95,10 +132,19 @@ namespace Web2.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public ActionResult Put(int id, [FromBody] Evenement value)
+        public ActionResult Put(int id, [FromBody] EvenementDTO value)
         {
-            _evenementBL.Updade(id, value);
-            
+            var evenementAMAJ = _evenementBL.Get(id);
+
+            if (evenementAMAJ == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(value, evenementAMAJ);
+
+            _evenementBL.Update(id, evenementAMAJ);
+
             return NoContent();
         }
 
@@ -125,10 +171,22 @@ namespace Web2.API.Controllers
         /// <returns>Liste de participation <see cref="Participation"/></returns>
         /// <response code="200">Lister des evenements de la ville</response>
         [HttpGet("/api/villes/{villeId}/[controller]")]
-        [ProducesResponseType(typeof(List<Evenement>), (int)HttpStatusCode.OK)]
-        public ActionResult<IEnumerable<Participation>> GetListByVille(int villeId)
+        [ProducesResponseType(typeof(List<EvenementDTO>), (int)HttpStatusCode.OK)]
+        public ActionResult<VilleEvenementsDTO> GetListByVille(int villeId)
         {
-            return Ok(_evenementBL.GetByVille(villeId));
+            var evenements = _evenementBL.GetByVille(villeId);
+            var evenementsDTO = _mapper.Map<List<EvenementDTO>>(evenements);
+
+            return Ok(evenementsDTO);
+        }
+
+        [HttpGet("/api/evenements/{eventId}/[controller]")]
+        public IActionResult GetTotalDesVentes(int eventId, int NombreDePlace)
+        {
+            var totalDesVentes = _eventRepository.TotalDesVentesEvenement(eventId, NombreDePlace);
+            var totalDesVentesDTO = _mapper.Map<decimal>(totalDesVentes);
+
+            return Ok(totalDesVentesDTO);
         }
     }
 }
