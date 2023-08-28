@@ -45,8 +45,8 @@ namespace Web2.API.Controllers
             if (!string.IsNullOrEmpty(recherche))
             {
                 query = query.Where(e =>
-                    e.Titre.Contains(recherche) ||
-                    e.Description.Contains(recherche));
+                    e.Titre.Contains(recherche, StringComparison.OrdinalIgnoreCase) ||
+                    e.Description.Contains(recherche, StringComparison.OrdinalIgnoreCase));
             }
 
             var evenements = await query
