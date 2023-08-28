@@ -81,15 +81,15 @@ namespace Web2.API.Migrations
                     Nom = table.Column<string>(type: "text", nullable: false),
                     Prenom = table.Column<string>(type: "text", nullable: false),
                     NombrePlace = table.Column<int>(type: "integer", nullable: false),
-                    EvenementId = table.Column<int>(type: "integer", nullable: false),
+                    EvenementID = table.Column<int>(type: "integer", nullable: false),
                     IsValid = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Participations", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Participations_Evenements_EvenementId",
-                        column: x => x.EvenementId,
+                        name: "FK_Participations_Evenements_EvenementID",
+                        column: x => x.EvenementID,
                         principalTable: "Evenements",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -106,9 +106,9 @@ namespace Web2.API.Migrations
                 column: "VilleID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participations_EvenementId",
+                name: "IX_Participations_EvenementID",
                 table: "Participations",
-                column: "EvenementId");
+                column: "EvenementID");
         }
 
         /// <inheritdoc />

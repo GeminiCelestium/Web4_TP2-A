@@ -12,8 +12,8 @@ using Web2.API.Data;
 namespace Web2.API.Migrations
 {
     [DbContext(typeof(TP2A_Context))]
-    [Migration("20230827013528_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230828021633_DeleteCascade")]
+    partial class DeleteCascade
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,7 +105,7 @@ namespace Web2.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("EvenementId")
+                    b.Property<int>("EvenementID")
                         .HasColumnType("integer");
 
                     b.Property<bool>("IsValid")
@@ -124,7 +124,7 @@ namespace Web2.API.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("EvenementId");
+                    b.HasIndex("EvenementID");
 
                     b.ToTable("Participations");
                 });
@@ -162,11 +162,13 @@ namespace Web2.API.Migrations
 
             modelBuilder.Entity("Web2.API.Data.Models.Participation", b =>
                 {
-                    b.HasOne("Web2.API.Data.Models.Evenement", null)
+                    b.HasOne("Web2.API.Data.Models.Evenement", "Evenement")
                         .WithMany("Participations")
-                        .HasForeignKey("EvenementId")
+                        .HasForeignKey("EvenementID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Evenement");
                 });
 
             modelBuilder.Entity("Web2.API.Data.Models.Categorie", b =>

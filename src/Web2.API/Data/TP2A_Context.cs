@@ -10,6 +10,13 @@ namespace Web2.API.Data
             //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);   // A Garder ?
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Evenement>().HasMany(c => c.Participations).WithOne(e => e.Evenement).OnDelete(DeleteBehavior.Cascade);
+        }
+
         public DbSet<Categorie> Categories { get; set; }
         public DbSet<Evenement> Evenements { get; set; }
         public DbSet<Participation> Participations { get; set; }

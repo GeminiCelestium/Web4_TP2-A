@@ -44,7 +44,7 @@ namespace Web2.API.BusinessLogic
                     Nom = participation.Nom,
                     Prenom = participation.Prenom,
                     NombrePlace = participation.NombrePlace,
-                    EvenementId = participation.EvenementId,
+                    Evenement = participation.Evenement,
                     IsValid = participation.IsValid,
                 };
 
@@ -68,7 +68,7 @@ namespace Web2.API.BusinessLogic
                     Nom = participation.Nom,
                     Prenom = participation.Prenom,
                     NombrePlace = participation.NombrePlace,
-                    EvenementId = participation.EvenementId,
+                    Evenement = participation.Evenement,
                     IsValid = participation.IsValid,
                 };
 
@@ -80,7 +80,8 @@ namespace Web2.API.BusinessLogic
 
         public EvenementParticipationsDTO GetByEvent(int eventId)
         {
-            IEnumerable<Participation> listeParticipationsParEvent = Repository.Participations.Where(x => x.EvenementId == eventId);
+            var evenement = Repository.Evenements.Where(x => x.ID == eventId);
+            IEnumerable<Participation> listeParticipationsParEvent = Repository.Participations.Where(x => x.Evenement == evenement);
             EvenementParticipationsDTO listeParticipationsParEventDTO = new EvenementParticipationsDTO();
 
             foreach (Participation participation in listeParticipationsParEvent)
@@ -92,7 +93,7 @@ namespace Web2.API.BusinessLogic
                     Nom = participation.Nom,
                     Prenom = participation.Prenom,
                     NombrePlace = participation.NombrePlace,
-                    EvenementId = participation.EvenementId,
+                    Evenement = participation.Evenement,
                     IsValid = participation.IsValid,
                 };
 
@@ -122,7 +123,7 @@ namespace Web2.API.BusinessLogic
                 Nom = participation.Nom,
                 Prenom = participation.Prenom,
                 NombrePlace = participation.NombrePlace,
-                EvenementId = participation.EvenementId,
+                Evenement = participation.Evenement,
                 IsValid = participation.IsValid,
             };
 
@@ -161,22 +162,22 @@ namespace Web2.API.BusinessLogic
             {
                 errorMsg = "Une adresse email valide est requise pour une participation";
             }
-            else if (value?.EvenementId is null)
+            else if (value?.Evenement is null)
             {
-                errorMsg = "L'identifiant de l'événement d'une participantion est requis";
+                errorMsg = "L'identifiant de l'événement d'une participation est requis";
             }
             else
             {
-                var evenement = Repository.Evenements.FirstOrDefault(x => x.ID == value.EvenementId);
-                if (evenement is null)
+                
+                if (value.Evenement is null)
                 {
-                    errorMsg = $"L'événement  (id = {value.EvenementId}) n'existe pas";
+                    errorMsg = $"L'événement {value.Evenement} n'existe pas";
                 }
-                else if (evenement.DateFin.Value.CompareTo(DateTime.Now) < 0)
+                else if (value.Evenement.DateFin.Value.CompareTo(DateTime.Now) < 0)
                 {
                     errorMsg = "Il n'est pas possible de participer a un événement passé";
                 }
-                else if (Repository.Participations.Any(x => x.EvenementId == value.EvenementId && x.Email.Equals(value.Email.Trim(), StringComparison.OrdinalIgnoreCase)))
+                else if (Repository.Participations.Any(x => x.Evenement == value.Evenement && x.Email.Equals(value.Email.Trim(), StringComparison.OrdinalIgnoreCase)))
                 {
                     errorMsg = $"Il existe déja une particpation enregistré avec cette adresse email  (email = {value.Email}) pour cette événement.";
                 }
@@ -219,7 +220,7 @@ namespace Web2.API.BusinessLogic
                 Nom = participationDTO.Nom,
                 Prenom = participationDTO.Prenom,
                 NombrePlace = participationDTO.NombrePlace,
-                EvenementId = participationDTO.EvenementId,
+                Evenement = participationDTO.Evenement,
                 IsValid = participationDTO.IsValid,
             };
         }
