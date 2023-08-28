@@ -23,7 +23,7 @@ namespace Web2.API.Repositorie
             var evenement = GetById(eventId);
             if (evenement == null)
             {
-                throw new ArgumentException("Invalid event ID");
+                throw new ArgumentException("ID de L'evenement invalide");
             }
 
             decimal totalSales = (decimal)(evenement.Prix * nombreDePlace);
