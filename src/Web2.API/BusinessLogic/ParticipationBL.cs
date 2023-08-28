@@ -163,7 +163,7 @@ namespace Web2.API.BusinessLogic
             }
             else if (value?.EvenementId is null)
             {
-                errorMsg = "L'identifiant de l'événement d'une participantion est requis";
+                errorMsg = "La participation doit être liée à un évènement";
             }
             else
             {
