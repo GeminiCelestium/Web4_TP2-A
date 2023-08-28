@@ -12,8 +12,8 @@ using Web2.API.Data;
 namespace Web2.API.Migrations
 {
     [DbContext(typeof(TP2A_Context))]
-    [Migration("20230828021633_DeleteCascade")]
-    partial class DeleteCascade
+    [Migration("20230828023257_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

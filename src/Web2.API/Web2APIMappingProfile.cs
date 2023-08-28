@@ -9,14 +9,9 @@ namespace Web2.API
         public Web2APIMappingProfile()
         {
             CreateMap<Categorie, CategorieDTO>();
-            CreateMap<Categorie, CategorieEvenementsDTO>();
             CreateMap<Ville, VilleDTO>();
-            CreateMap<Ville, VilleEvenementsDTO>();
             CreateMap<Evenement, EvenementDTO>();
-            CreateMap<Evenement, EvenementParticipationsDTO>();
-            CreateMap<Participation, ParticipationDTO>();
-
-            
+            CreateMap<Participation, ParticipationDTO>();           
         }
     }
 }

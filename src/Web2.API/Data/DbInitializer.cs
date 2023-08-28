@@ -67,7 +67,7 @@ namespace Web2.API.Data
                     Nom = "Gravel",
                     Prenom = "Jason",
                     NombrePlace = 5,
-                    Evenement = evenements[2],
+                    Evenement = evenements[1],
                     IsValid = true,
                 },
 
@@ -78,7 +78,7 @@ namespace Web2.API.Data
                     Nom = "Tremblay",
                     Prenom = "Nicolas",
                     NombrePlace = 5,
-                    Evenement = evenements[2],
+                    Evenement = evenements[1],
                     IsValid = true,
                 },
 
@@ -89,7 +89,7 @@ namespace Web2.API.Data
                     Nom = "Dupont",
                     Prenom = "Marie-Pierre",
                     NombrePlace = 5,
-                    Evenement = evenements[2],
+                    Evenement = evenements[1],
                     IsValid = true,
                 },
 
@@ -100,7 +100,7 @@ namespace Web2.API.Data
                     Nom = "Joseph",
                     Prenom = "Nathan",
                     NombrePlace = 17,
-                    Evenement = evenements[1],
+                    Evenement = evenements[0],
                     IsValid = true,
                 },
 
@@ -111,7 +111,7 @@ namespace Web2.API.Data
                     Nom = "Gravel",
                     Prenom = "Jason",
                     NombrePlace = 21,
-                    Evenement = evenements[1],
+                    Evenement = evenements[0],
                     IsValid = true,
                 },
 
@@ -122,7 +122,7 @@ namespace Web2.API.Data
                     Nom = "Marcotte",
                     Prenom = "Vincent",
                     NombrePlace = 18,
-                    Evenement = evenements[1],
+                    Evenement = evenements[0],
                     IsValid = true,
                 },
             };

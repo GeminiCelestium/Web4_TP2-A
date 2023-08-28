@@ -167,8 +167,7 @@ namespace Web2.API.BusinessLogic
                 errorMsg = "La participation doit être liée à une évènement";
             }
             else
-            {
-                
+            {              
                 if (value.Evenement is null)
                 {
                     errorMsg = $"L'événement {value.Evenement} n'existe pas";
