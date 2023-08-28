@@ -7,6 +7,7 @@ using Web2.API.BusinessLogic;
 using Web2.API.Data;
 using Web2.API.Data.Models;
 using Web2.API.DTO;
+using Web2.API.Repositorie;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,14 +20,16 @@ namespace Web2.API.Controllers
     {
         private readonly IEvenementBL _evenementBL;
         private readonly IMapper _mapper;
+        private readonly IEventRepository _eventRepository;
 
         private readonly TP2A_Context _context;
 
-        public EvenementsController(IEvenementBL evenementBL, IMapper mapper, TP2A_Context context)
+        public EvenementsController(IEvenementBL evenementBL, IMapper mapper, TP2A_Context context, IEventRepository eventRepository)
         {
             _evenementBL = evenementBL;
             _mapper = mapper;
             _context = context;
+            _eventRepository = eventRepository;
         }
 
 
@@ -175,6 +178,13 @@ namespace Web2.API.Controllers
             var evenementsDTO = _mapper.Map<List<EvenementDTO>>(evenements);
 
             return Ok(evenementsDTO);
+        }
+
+        [HttpGet("evenements/{eventId}/TotalDesVentes")]
+        public IActionResult GetTotalDesVentes(int eventId, int NombreDePlace)
+        {
+            var totalDesVentes = _eventRepository.TotalDesVentesEvenement(eventId, NombreDePlace);
+            return Ok(totalDesVentes);
         }
     }
 }

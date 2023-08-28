@@ -6,6 +6,7 @@ using Web2.API.BusinessLogic;
 using Web2.API.Data;
 using Web2.API.Extentions;
 using Web2.API.Filters;
+using Web2.API.Repositorie;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddScoped<ICategoryBL, CategoryBL>();
 builder.Services.AddScoped<IVilleBL, VillesBL>();
 builder.Services.AddScoped<IEvenementBL, EvenementBL>();
 builder.Services.AddScoped<IParticipationBL, ParticipationBL>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 
 builder.Services.AddControllers(o =>
 {
