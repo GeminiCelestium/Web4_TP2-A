@@ -7,7 +7,7 @@ using Web2.API.BusinessLogic;
 using Web2.API.Data;
 using Web2.API.Data.Models;
 using Web2.API.DTO;
-using Web2.API.Repositorie;
+using Web2.API.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -180,11 +180,13 @@ namespace Web2.API.Controllers
             return Ok(evenementsDTO);
         }
 
-        [HttpGet("evenements/{eventId}/TotalDesVentes")]
+        [HttpGet("/api/evenements/{eventId}/[controller]")]
         public IActionResult GetTotalDesVentes(int eventId, int NombreDePlace)
         {
             var totalDesVentes = _eventRepository.TotalDesVentesEvenement(eventId, NombreDePlace);
-            return Ok(totalDesVentes);
+            var totalDesVentesDTO = _mapper.Map<decimal>(totalDesVentes);
+
+            return Ok(totalDesVentesDTO);
         }
     }
 }
